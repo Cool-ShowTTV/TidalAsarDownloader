@@ -1,5 +1,5 @@
 # TidalAsarDownloader
-A simple script to download all the ASAR updates on Tidal's server.
+A simple script to download all the ASAR updates on Tidal's server. This is useful for debuging something that worked in the last version in custom clients.
 
 Might add support later to download asar for MAC too but if you know what you are doing it shouldn't be hard.
 
