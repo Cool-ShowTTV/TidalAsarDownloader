@@ -80,7 +80,7 @@ def extract_asar(nupkg_file:str, out_name:str):
         zip_ref.extract(asar_file, "temp")
         
         version_id = nupkg_file.split('-')[1]
-        final_path = f"{out_name}/{version_id} asar.asar"
+        final_path = f"{out_name}/TIDAL-{version_id}.asar"
         try:
             os.rename(f"temp/{asar_file}", final_path)
         except FileExistsError:
@@ -104,3 +104,4 @@ if __name__ == "__main__":
     os.removedirs("temp")
     # I remove temp to clean up but not nupkg just in case you need it later
     # Feel free to add that if you care.
+
