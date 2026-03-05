@@ -4,6 +4,8 @@ import zipfile, shutil, os
 """Hacky script m8"""
 
 OUTPUT_DIR = "output"
+BETA = False # If to download beta builds instead
+URL = f"https://download.tidal.com/desktop/windows{'/beta' if BETA else ''}"
 
 # region Functions
 def get_versions()->list:
@@ -24,7 +26,7 @@ def get_versions()->list:
     #   - full.nupkg: The full package, which contains the full .asar file we want
     #   - delta.nupkg: A smaller update package, which only contains a .diff/.bsdiff file, which isn't helpful for us
     ###
-    response = get("https://download.tidal.com/desktop/windows/RELEASES")
+    response = get(f"{URL}/RELEASES")
     if response.status_code != 200:
         print("Failed to fetch versions, status code:", response.status_code)
         print("Feel free to try again later if it's down.")
@@ -95,7 +97,7 @@ if __name__ == "__main__":
     
     versions = get_versions()
     for version in versions:
-        file_url = f"https://download.tidal.com/desktop/windows/{version}"
+        file_url = f"{URL}/{version}"
         dest_path = f"{OUTPUT_DIR}/{version}"
         download_file(file_url, dest_path)
         extract_asar(dest_path, OUTPUT_DIR)
@@ -104,4 +106,3 @@ if __name__ == "__main__":
     os.removedirs("temp")
     # I remove temp to clean up but not nupkg just in case you need it later
     # Feel free to add that if you care.
-
