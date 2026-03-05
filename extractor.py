@@ -141,6 +141,6 @@ if __name__ == "__main__":
     except ValueError:
         print("Invalid input, exiting.")
 
-    # os.removedirs("temp")
+    os.removedirs("temp")
     # I remove temp to clean up but not nupkg just in case you need it later
     # Feel free to add that if you care.
