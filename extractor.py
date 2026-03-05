@@ -1,11 +1,10 @@
 from requests import get
 import zipfile, shutil, os
 
-"""Hacky script m8"""
-
 OUTPUT_DIR = "output"
 BETA = False # If to download beta builds instead
-URL = f"https://download.tidal.com/desktop/windows{'/beta' if BETA else ''}"
+BASE_URL = f"https://download.tidal.com/desktop/windows"
+API_URL = f"{BASE_URL}{'/beta' if BETA else ''}" # Combines base and if you want beta or not into one URL var
 
 # region Functions
 def get_versions()->list:
@@ -26,7 +25,7 @@ def get_versions()->list:
     #   - full.nupkg: The full package, which contains the full .asar file we want
     #   - delta.nupkg: A smaller update package, which only contains a .diff/.bsdiff file, which isn't helpful for us
     ###
-    response = get(f"{URL}/RELEASES")
+    response = get(f"{API_URL}/RELEASES")
     if response.status_code != 200:
         print("Failed to fetch versions, status code:", response.status_code)
         print("Feel free to try again later if it's down.")
@@ -59,8 +58,7 @@ def download_file(url:str, dest:str):
         print(f"Failed to download {url}")
 
 def clean_temp():
-    """Removes and recreates the temp folder
-    """
+    """Removes and recreates the temp folder"""
     shutil.rmtree("temp")
     os.makedirs("temp")
 
@@ -95,8 +93,10 @@ def download_and_extract(versions:list):
         versions (list): A list of version file names to download and extract
         out_name (str): The file to output the ASAR to
     """
+    if not versions: raise ValueError("Versions list must not be empty")
+
     for version in versions:
-        file_url = f"{URL}/{version}"
+        file_url = f"{API_URL}/{version}"
         dest_path = f"{OUTPUT_DIR}/{version}"
         download_file(file_url, dest_path)
         extract_asar(dest_path)
@@ -143,4 +143,4 @@ if __name__ == "__main__":
 
     os.removedirs("temp")
     # I remove temp to clean up but not nupkg just in case you need it later
-    # Feel free to add that if you care.
+    # Feel free to add that or move them to temp.
