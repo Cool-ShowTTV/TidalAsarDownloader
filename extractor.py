@@ -64,12 +64,11 @@ def clean_temp():
     shutil.rmtree("temp")
     os.makedirs("temp")
 
-def extract_asar(nupkg_file:str, out_name:str):
+def extract_asar(nupkg_file:str):
     """Searches for and extracts the ASAR file from the nupkg
 
     Args:
         nupkg_file (str): The update nupkg containing an ASAR file
-        out_name (str): The file to output the ASAR to
 
     Raises:
         FileNotFoundError: If the ASAR file isn't found
@@ -82,12 +81,26 @@ def extract_asar(nupkg_file:str, out_name:str):
         zip_ref.extract(asar_file, "temp")
         
         version_id = nupkg_file.split('-')[1]
-        final_path = f"{out_name}/TIDAL-{version_id}.asar"
+        final_path = f"{OUTPUT_DIR}/TIDAL-{version_id}.asar"
         try:
             os.rename(f"temp/{asar_file}", final_path)
         except FileExistsError:
             print(f"{final_path} already exists, skipping.")
         clean_temp()
+
+def download_and_extract(versions:list):
+    """Downloads and extracts all versions in the list
+
+    Args:
+        versions (list): A list of version file names to download and extract
+        out_name (str): The file to output the ASAR to
+    """
+    for version in versions:
+        file_url = f"{URL}/{version}"
+        dest_path = f"{OUTPUT_DIR}/{version}"
+        download_file(file_url, dest_path)
+        extract_asar(dest_path)
+        print(f"Downloaded Tidal version {version} to {dest_path}")
 # endregion
 
 if __name__ == "__main__":
@@ -96,13 +109,38 @@ if __name__ == "__main__":
     else: clean_temp()
     
     versions = get_versions()
-    for version in versions:
-        file_url = f"{URL}/{version}"
-        dest_path = f"{OUTPUT_DIR}/{version}"
-        download_file(file_url, dest_path)
-        extract_asar(dest_path, OUTPUT_DIR)
-        print(f"Downloaded Tidal version {version} to {dest_path}")
+    versions.reverse()
 
-    os.removedirs("temp")
+    print(" _______  ___   ______   _______  ___        ______   ___     ")
+    print("|       ||   | |      | |   _   ||   |      |      | |   |    ")
+    print("|_     _||   | |  _    ||  |_|  ||   |      |  _    ||   |    ")
+    print("  |   |  |   | | | |   ||       ||   |      | | |   ||   |    ")
+    print("  |   |  |   | | |_|   ||       ||   |___   | |_|   ||   |___ ")
+    print("  |   |  |   | |       ||   _   ||       |  |       ||       |")
+    print("  |___|  |___| |______| |__| |__||_______|  |______| |_______|")
+
+    count = 1
+    print()
+    print("0 > All")
+    for version in versions:
+        version_id = version.split('-')[1]
+        print(f"{count} > {version_id}")
+        count += 1
+    
+    print()
+    print("Enter the number of the version you want to download, or 0 to download all")
+    input_str = input("> ")
+    try:
+        choice = int(input_str)
+        if choice == 0:
+            download_and_extract(versions)
+        elif 1 <= choice <= len(versions):
+            download_and_extract([versions[choice - 1]])
+        else:
+            print("Invalid choice, exiting.")
+    except ValueError:
+        print("Invalid input, exiting.")
+
+    # os.removedirs("temp")
     # I remove temp to clean up but not nupkg just in case you need it later
     # Feel free to add that if you care.
