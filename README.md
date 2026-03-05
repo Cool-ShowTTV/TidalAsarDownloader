@@ -7,3 +7,6 @@ A simple script to download all the ASAR updates on Tidal's server. This is usef
 3. Downloads the Windows nupkg file to a temp folder.
 4. Reads the nupkg as a zip copying the ASAR file from it.
 5. Loops steps 2-4 for each nupkg file. 
+
+## Screenshot
+<img width="743" height="442" alt="image" src="https://github.com/user-attachments/assets/6b6799bc-6833-4b78-9b86-cf65464d26dd" />
